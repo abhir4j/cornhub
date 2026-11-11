@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://chess-cozily-requisite.ngrok-free.dev/api/:path*?_key=nocturne_vault_99x_secret"
+    }
+  ]
+}
