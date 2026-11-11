@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://germany1.azioncloud.com:25579/api/:path*?_key=nocturne_vault_99x_secret"
+      "destination": "https://germany1.azioncloud.com:25579/api/:path*?_key=nocturne_vault_99x_secret"
     }
   ]
 }
