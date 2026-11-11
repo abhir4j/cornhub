@@ -1165,12 +1165,13 @@
 
   <script>
 
-  const API_BASE = "http://germany1.azioncloud.com:25579";
-    // Automatically detects local dev vs deployed production environment
-  const isLocalHost =
-  window.location.protocol === "file:" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.hostname === "localhost";
+    const isLocalHost =
+    window.location.protocol === "file:" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost";
+
+    // When on Vercel, API_BASE is "" so requests go to /api/videos (which Vercel rewrites to your bot)
+    const API_BASE = isLocalHost && window.location.port !== "8000" ? "http://127.0.0.1:8000" : "";
 
 
     // State Management
