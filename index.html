@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORNHUB // Ultra HD Streaming Vault</title>
+  <!-- Premium Custom Vector SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a855f7'/%3E%3Cstop offset='100%25' stop-color='%236366f1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23050505'/%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='none' stroke='url(%23g)' stroke-width='3'/%3E%3Cpath d='M24 18v28l22-14-22-14z' fill='url(%23g)'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-elevated: #0a0a0e;
+      --glass: rgba(14, 14, 18, 0.78);
+      --glass-hover: rgba(24, 24, 32, 0.92);
+      --border: rgba(255, 255, 255, 0.07);
+      --border-active: rgba(168, 85, 247, 0.55);
+      --accent: #a855f7;
+      --accent-secondary: #6366f1;
+      --accent-glow: rgba(168, 85, 247, 0.25);
+      --text: #f4f4f6;
+      --text-muted: #8e8e99;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 0%, rgba(168, 85, 247, 0.08), transparent 35%),
+        radial-gradient(circle at 85% 10%, rgba(99, 102, 241, 0.06), transparent 35%);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Top Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(5, 5, 5, 0.84);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(99,102,241,0.2));
+      border: 1px solid var(--border-active);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .brand-logo svg {
+      width: 20px;
+      height: 20px;
+      stroke: #d8b4fe;
+    }
+
+    .brand-name {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pro-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      color: #fff;
+      letter-spacing: 0.8px;
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+      flex: 1;
+      max-width: 580px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(16, 16, 22, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 90px 10px 40px;
+      color: var(--text);
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .search-kbd {
+      position: absolute;
+      right: 78px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 5px;
+      pointer-events: none;
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 5px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .search-btn:hover { opacity: 0.9; }
+
+    /* Header Action Buttons */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .icon-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+
+    .icon-btn:hover, .icon-btn.active {
+      color: #fff;
+      border-color: var(--border-active);
+      background: rgba(168, 85, 247, 0.12);
+    }
+
+    .icon-btn.panic-btn:hover {
+      border-color: rgba(239, 68, 68, 0.6);
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .count-badge {
+      background: rgba(168, 85, 247, 0.25);
+      color: #e9d5ff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 99px;
+    }
+
+    /* Layout Shell */
+    .app-shell {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 24px;
+      padding: 20px 24px;
+      flex: 1;
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+      aside.sidebar {
+        display: flex;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 8px;
+      }
+      .sidebar-section {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 0 !important;
+      }
+      .sidebar-label { display: none; }
+    }
+
+    /* Left Sidebar */
+    aside.sidebar {
+      position: sticky;
+      top: 84px;
+      height: fit-content;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      padding-left: 10px;
+    }
+
+    .nav-item {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 9px 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+      margin-bottom: 4px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(168, 85, 247, 0.18), rgba(168, 85, 247, 0.03));
+      border-color: rgba(168, 85, 247, 0.35);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .nav-item.active svg {
+      stroke: var(--accent);
+    }
+
+    /* Content Area Toolbar */
+    .content-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-heading h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .result-pill {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 99px;
+    }
+
+    .toolbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .select-box {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-box:focus { border-color: var(--accent); }
+
+    /* Category Chips Bar */
+    .chips-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      scrollbar-width: none;
+    }
+    .chips-scroll::-webkit-scrollbar { display: none; }
+
+    .cat-chip {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cat-chip:hover, .cat-chip.active {
+      background: rgba(168, 85, 247, 0.16);
+      color: #fff;
+      border-color: var(--border-active);
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      gap: 20px;
+    }
+
+    .video-grid.compact {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .video-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-active);
+      box-shadow: 0 14px 34px -12px rgba(168, 85, 247, 0.22);
+      background: var(--glass-hover);
+    }
+
+    .thumb-container {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: #09090d;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .thumb-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+
+    .video-card:hover .thumb-container img {
+      transform: scale(1.06);
+    }
+
+    .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 45%);
+      opacity: 0.85;
+      transition: opacity 0.25s;
+    }
+
+    .play-hover-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(168, 85, 247, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 24px rgba(168, 85, 247, 0.6);
+    }
+
+    .play-hover-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+      margin-left: 2px;
+    }
+
+    .video-card:hover .play-hover-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .badge-hd {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(5, 5, 5, 0.78);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #d8b4fe;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(5, 5, 5, 0.85);
+      backdrop-filter: blur(4px);
+      padding: 3px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #f4f4f6;
+    }
+
+    /* Quick Card Action Buttons (Bookmark, Queue, Download) */
+    .card-quick-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 5px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.2s ease;
+      z-index: 3;
+    }
+
+    .video-card:hover .card-quick-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mini-action {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(10, 10, 14, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e4e4e7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: all 0.15s;
+    }
+
+    .mini-action svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+    }
+
+    .mini-action:hover, .mini-action.saved {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .card-info {
+      padding: 13px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.42;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 11px;
+      cursor: pointer;
+    }
+
+    .video-card:hover .card-title { color: #e9d5ff; }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 9px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .meta-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .meta-stat svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+    }
+
+    .rating-stat {
+      color: #c084fc;
+      font-weight: 600;
+    }
+
+    /* Skeleton Loader */
+    .skeleton-grid {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      gap: 20px;
+    }
+
+    .skeleton-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      height: 255px;
+      position: relative;
+    }
+
+    .skeleton-shimmer {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0.01) 25%, rgba(168,85,247,0.06) 50%, rgba(255,255,255,0.01) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Empty / Error State */
+    .state-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 70px 20px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      gap: 12px;
+    }
+
+    .state-box svg {
+      width: 42px;
+      height: 42px;
+      stroke: var(--accent);
+      opacity: 0.8;
+    }
+
+    .state-box h3 { font-size: 16px; font-weight: 600; }
+    .state-box p { font-size: 13px; color: var(--text-muted); max-width: 420px; }
+
+    /* Pagination */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 36px 0 20px;
+    }
+
+    .page-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .page-btn svg { width: 14px; height: 14px; stroke: currentColor; }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(168, 85, 247, 0.14);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* Player Modal (Cinema & Ambilight) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 3, 5, 0.92);
+      backdrop-filter: blur(18px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .player-modal {
+      width: 100%;
+      max-width: 1080px;
+      background: #09090d;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .player-modal.ambilight {
+      box-shadow: 0 0 110px 15px rgba(168, 85, 247, 0.28), 0 0 40px rgba(99, 102, 241, 0.2);
+      border-color: rgba(168, 85, 247, 0.45);
+    }
+
+    .player-modal.theater {
+      max-width: 94vw;
+    }
+
+    .modal-top {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: #07070a;
+    }
+
+    .modal-title {
+      font-size: 14.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 70%;
+    }
+
+    .modal-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-stage {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      background: #000;
+      position: relative;
+    }
+
+    .player-stage iframe, .player-stage video {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .modal-bottom {
+      padding: 14px 20px;
+      background: #07070a;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+
+    .modal-action-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-action svg { width: 14px; height: 14px; stroke: currentColor; }
+
+    .btn-action:hover, .btn-action.active {
+      border-color: var(--accent);
+      background: rgba(168, 85, 247, 0.18);
+      color: #fff;
+    }
+
+    .btn-action.primary-dl {
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+      border-color: transparent;
+      color: #fff;
+    }
+
+    /* Download Streams Drawer inside Modal */
+    .download-drawer {
+      display: none;
+      padding: 14px 20px;
+      background: #0c0c12;
+      border-top: 1px solid var(--border);
+    }
+
+    .download-drawer.open { display: block; }
+
+    .dl-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .dl-chip {
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: #e9d5ff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .dl-chip:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: rgba(16, 16, 22, 0.95);
+      border: 1px solid var(--border-active);
+      backdrop-filter: blur(12px);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Header -->
+  <header>
+    <div class="nav-container">
+      <div class="brand-group" onclick="switchView('discover')">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <div class="brand-name">
+          CORNHUB 
+        </div>
+      </div>
+
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search 4K streams, creators, categories, tags..."
+          onkeydown="if(event.key === 'Enter') executeSearch()"
+        />
+        <span class="search-kbd mono">/</span>
+        <button class="search-btn" onclick="executeSearch()">Search</button>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="incognitoBtn" onclick="toggleIncognito()" title="Pause Watch History Recording">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+          <span id="incognitoLabel">Incognito Off</span>
+        </button>
+
+        <button class="icon-btn panic-btn" onclick="triggerPanicExit()" title="Panic Button (Double-tap ESC)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Quick Exit</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Shell -->
+  <div class="app-shell">
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <button class="nav-item active" id="nav-discover" onclick="switchView('discover')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            Discover Feed
+          </span>
+        </button>
+        <button class="nav-item" id="nav-toprated" onclick="quickFilter('popular', 'rating', 'nav-toprated')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Top Rated
+          </span>
+        </button>
+        <button class="nav-item" id="nav-4k" onclick="quickFilter('4k', 'mostviewed', 'nav-4k')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            4K Ultra HD
+          </span>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Personal Library</div>
+        <button class="nav-item" id="nav-favorites" onclick="switchView('favorites')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            Saved Vault
+          </span>
+          <span class="count-badge mono" id="favCount">0</span>
+        </button>
+
+        <button class="nav-item" id="nav-watchlater" onclick="switchView('watchlater')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Watch Later
+          </span>
+          <span class="count-badge mono" id="wlCount">0</span>
+        </button>
+
+        <button class="nav-item" id="nav-history" onclick="switchView('history')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+            Watch History
+          </span>
+          <span class="count-badge mono" id="histCount">0</span>
+        </button>
+
+        <button class="nav-item" id="nav-downloads" onclick="switchView('downloads')">
+          <span class="nav-item-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download Queue
+          </span>
+          <span class="count-badge mono" id="dlCount">0</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Column -->
+    <main>
+      <!-- Category Pills -->
+      <div class="chips-scroll" id="categoryRow">
+        <button class="cat-chip active" onclick="selectCategoryChip(this, 'popular')">Trending Now</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, '4k')">4K 60FPS</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'indian')">Indian / Desi</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'amateur')">Verified Amateur</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'japanese')">Japanese</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'pov')">POV</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'massage')">Massage</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'blonde')">Blonde</button>
+        <button class="cat-chip" onclick="selectCategoryChip(this, 'vr')">VR Experience</button>
+      </div>
+
+      <!-- Content Header & Filters -->
+      <div class="content-toolbar">
+        <div class="section-heading">
+          <h1 id="viewTitle">Trending Streams</h1>
+          <span class="result-pill mono" id="resultCountPill">Loading...</span>
+        </div>
+
+        <div class="toolbar-controls">
+          <button class="icon-btn" id="clearLibBtn" style="display:none;" onclick="clearCurrentLibrary()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <span>Clear List</span>
+          </button>
+
+          <select id="sortSelect" class="select-box" onchange="changeOrdering()">
+            <option value="mostviewed">Sort: Most Viewed</option>
+            <option value="rating">Sort: Highest Rated</option>
+            <option value="newest">Sort: Recently Added</option>
+          </select>
+
+          <button class="icon-btn" onclick="toggleGridDensity()" title="Toggle Grid Density">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Skeleton Shimmer Grid -->
+      <div class="skeleton-grid" id="skeletonGrid">
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+        <div class="skeleton-card"><div class="skeleton-shimmer"></div></div>
+      </div>
+
+      <!-- Empty / Error State -->
+      <div class="state-box" id="stateBox">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3 id="stateHeading">No Streams Found</h3>
+        <p id="stateSubtext">Try refreshing or searching for another keyword.</p>
+        <button class="page-btn" onclick="loadDiscoverStreams()" style="margin-top:8px;">Reload Feed</button>
+      </div>
+
+      <!-- Video Cards Grid -->
+      <div class="video-grid" id="videoGrid"></div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar" id="paginationBar">
+        <button class="page-btn" id="prevPageBtn" onclick="navigatePage(-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Previous
+        </button>
+        <span class="result-pill mono" id="pageNumberBadge">PAGE 01</span>
+        <button class="page-btn" id="nextPageBtn" onclick="navigatePage(1)">
+          Next
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Cinema Modal Player -->
+  <div class="modal-backdrop" id="playerBackdrop" onclick="if(event.target === this) closePlayerModal()">
+    <div class="player-modal ambilight" id="playerModalBox">
+      <div class="modal-top">
+        <div class="modal-title" id="modalVideoTitle">Stream Title</div>
+        <div class="modal-top-actions">
+          <button class="btn-action active" id="ambilightBtn" onclick="toggleAmbilight()" title="Toggle Ambilight Glow">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line></svg>
+            <span>Ambilight</span>
+          </button>
+          <button class="btn-action" id="theaterBtn" onclick="toggleTheaterMode()" title="Theater Mode (T)">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>
+            <span>Theater</span>
+          </button>
+          <button class="btn-action" onclick="closePlayerModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="player-stage" id="playerStage">
+        <iframe id="modalIframe" src="" allowfullscreen allow="autoplay; fullscreen"></iframe>
+      </div>
+
+      <!-- Direct Video Download Resolver Drawer -->
+      <div class="download-drawer" id="downloadDrawer">
+        <div style="font-size:12px; color:var(--text-muted); font-weight:600;">DIRECT STREAM & DOWNLOAD LINKS:</div>
+        <div class="dl-list" id="downloadLinksList"></div>
+      </div>
+
+      <div class="modal-bottom">
+        <div class="modal-stats mono" id="modalStatsText"></div>
+
+        <div class="modal-action-group">
+          <button class="btn-action" id="modalFavBtn" onclick="toggleCurrentModalBookmark()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span id="modalFavText">Save to Vault</span>
+          </button>
+
+          <button class="btn-action" onclick="copyStreamShareLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            <span>Copy Link</span>
+          </button>
+
+          <button class="btn-action primary-dl" onclick="fetchDirectDownloadLinks()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download MP4</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Automatically detects local dev vs deployed production environment
+    const isLocalHost =
+      window.location.protocol === "file:" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "localhost";
+    const API_BASE = isLocalHost && window.location.port !== "8000" ? "http://127.0.0.1:8000" : "";
+
+    // State Management
+    let activeView = "discover"; // discover | favorites | watchlater | history | downloads
+    let currentQuery = "";
+    let currentOrdering = "mostviewed";
+    let currentPage = 1;
+    let incognitoMode = false;
+    let currentModalVideo = null;
+    let lastEscTime = 0;
+
+    // LocalStorage Keys
+    const STORAGE_KEYS = {
+      favorites: "nocturne_favorites_v2",
+      watchlater: "nocturne_watchlater_v2",
+      history: "nocturne_history_v2",
+      downloads: "nocturne_downloads_v2"
+    };
+
+    function getStore(key) {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS[key]) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function setStore(key, arr) {
+      localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(arr));
+      updateSidebarCounters();
+    }
+
+    function updateSidebarCounters() {
+      document.getElementById("favCount").textContent = getStore("favorites").length;
+      document.getElementById("wlCount").textContent = getStore("watchlater").length;
+      document.getElementById("histCount").textContent = getStore("history").length;
+      document.getElementById("dlCount").textContent = getStore("downloads").length;
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>${escapeHtml(msg)}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 2800);
+    }
+
+    // Fetch Live Discover Streams
+    async function loadDiscoverStreams() {
+      const skeleton = document.getElementById("skeletonGrid");
+      const grid = document.getElementById("videoGrid");
+      const stateBox = document.getElementById("stateBox");
+      const pagination = document.getElementById("paginationBar");
+
+      skeleton.style.display = "grid";
+      grid.innerHTML = "";
+      stateBox.style.display = "none";
+      pagination.style.display = "flex";
+      document.getElementById("clearLibBtn").style.display = "none";
+
+      try {
+        const endpoint = `${API_BASE}/api/videos?q=${encodeURIComponent(currentQuery)}&page=${currentPage}&ordering=${currentOrdering}`;
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        if (data.status === "ok" && Array.isArray(data.videos) && data.videos.length > 0) {
+          renderVideoCards(data.videos);
+          document.getElementById("resultCountPill").textContent = `${data.videos.length} STREAMS`;
+        } else {
+          showEmptyState("Upstream Connection Reset", data.message || "ISP packet filter dropped the request. Click Reload Feed to retry immediately.");
+        }
+      } catch (err) {
+        showEmptyState("Backend Offline", "Ensure python server.py is running on port 8000.");
+      } finally {
+        skeleton.style.display = "none";
+        document.getElementById("pageNumberBadge").textContent = `PAGE ${String(currentPage).padStart(2, "0")}`;
+        document.getElementById("prevPageBtn").disabled = currentPage <= 1;
+      }
+    }
+
+    function showEmptyState(title, subtitle) {
+      const stateBox = document.getElementById("stateBox");
+      document.getElementById("stateHeading").textContent = title;
+      document.getElementById("stateSubtext").textContent = subtitle;
+      document.getElementById("resultCountPill").textContent = "0 STREAMS";
+      stateBox.style.display = "flex";
+    }
+
+    function renderVideoCards(videos) {
+      const grid = document.getElementById("videoGrid");
+      grid.innerHTML = "";
+
+      const favIds = new Set(getStore("favorites").map(v => v.id));
+      const wlIds = new Set(getStore("watchlater").map(v => v.id));
+
+      videos.forEach((vid) => {
+        const card = document.createElement("div");
+        card.className = "video-card";
+
+        const thumbUrl = vid.thumb && vid.thumb.startsWith("/api/")
+          ? `${API_BASE}${vid.thumb}`
+          : (vid.thumb || "");
+
+        const isFav = favIds.has(vid.id);
+        const isWl = wlIds.has(vid.id);
+        const viewsStr = Number(vid.views || 0).toLocaleString();
+
+        card.innerHTML = `
+          <div class="thumb-container" onclick="openPlayerModal(${ escapeAttr(JSON.stringify(vid)) })">
+            <img src="${thumbUrl}" alt="" loading="lazy" />
+            <div class="thumb-overlay"></div>
+            <span class="badge-hd mono">HD</span>
+            <span class="badge-duration mono">${escapeHtml(vid.duration || "0:00")}</span>
+            <div class="play-hover-icon">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </div>
+          </div>
+
+          <div class="card-quick-actions">
+            <button class="mini-action ${isFav ? 'saved' : ''}" title="Save to Vault" onclick="event.stopPropagation(); toggleLibraryItem('favorites', ${escapeAttr(JSON.stringify(vid))}, this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            </button>
+            <button class="mini-action ${isWl ? 'saved' : ''}" title="Watch Later" onclick="event.stopPropagation(); toggleLibraryItem('watchlater', ${escapeAttr(JSON.stringify(vid))}, this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </button>
+            <button class="mini-action" title="Add to Download Queue" onclick="event.stopPropagation(); queueVideoDownload(${escapeAttr(JSON.stringify(vid))})">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
+          </div>
+
+          <div class="card-info">
+            <div class="card-title" onclick="openPlayerModal(${ escapeAttr(JSON.stringify(vid)) })">${escapeHtml(vid.title)}</div>
+            <div class="card-footer mono">
+              <span class="meta-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                ${viewsStr}
+              </span>
+              <span class="meta-stat rating-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                ${vid.rating}%
+              </span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Library Management (Favorites, Watch Later, History, Downloads)
+    function toggleLibraryItem(storeKey, videoObj, btnEl) {
+      let list = getStore(storeKey);
+      const exists = list.some(item => item.id === videoObj.id);
+
+      if (exists) {
+        list = list.filter(item => item.id !== videoObj.id);
+        if (btnEl) btnEl.classList.remove("saved");
+        showToast("Removed from library");
+      } else {
+        list.unshift({ ...videoObj, savedAt: Date.now() });
+        if (btnEl) btnEl.classList.add("saved");
+        showToast(storeKey === "favorites" ? "Saved to Personal Vault" : "Added to Watch Later");
+      }
+
+      setStore(storeKey, list);
+      if (activeView === storeKey) renderLibraryView(storeKey);
+    }
+
+    function recordHistory(videoObj) {
+      if (incognitoMode) return;
+      let hist = getStore("history").filter(item => item.id !== videoObj.id);
+      hist.unshift({ ...videoObj, watchedAt: Date.now() });
+      if (hist.length > 100) hist = hist.slice(0, 100);
+      setStore("history", hist);
+    }
+
+    function queueVideoDownload(videoObj) {
+      let dls = getStore("downloads").filter(item => item.id !== videoObj.id);
+      dls.unshift({ ...videoObj, queuedAt: Date.now() });
+      setStore("downloads", dls);
+      openPlayerModal(videoObj);
+      setTimeout(() => fetchDirectDownloadLinks(), 300);
+    }
+
+    function switchView(viewName) {
+      activeView = viewName;
+      document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
+      const navBtn = document.getElementById(`nav-${viewName}`);
+      if (navBtn) navBtn.classList.add("active");
+
+      const titles = {
+        discover: currentQuery ? `Search: "${currentQuery}"` : "Trending Streams",
+        favorites: "Saved Vault",
+        watchlater: "Watch Later Queue",
+        history: "Watch History",
+        downloads: "Download Queue"
+      };
+      document.getElementById("viewTitle").textContent = titles[viewName] || "Streams";
+
+      if (viewName === "discover") {
+        document.getElementById("categoryRow").style.display = "flex";
+        loadDiscoverStreams();
+      } else {
+        document.getElementById("categoryRow").style.display = "none";
+        renderLibraryView(viewName);
+      }
+    }
+
+    function renderLibraryView(storeKey) {
+      const list = getStore(storeKey);
+      const grid = document.getElementById("videoGrid");
+      const stateBox = document.getElementById("stateBox");
+      const pagination = document.getElementById("paginationBar");
+      const clearBtn = document.getElementById("clearLibBtn");
+
+      pagination.style.display = "none";
+      clearBtn.style.display = list.length > 0 ? "inline-flex" : "none";
+      document.getElementById("resultCountPill").textContent = `${list.length} SAVED`;
+
+      if (list.length === 0) {
+        grid.innerHTML = "";
+        showEmptyState("Your Library is Empty", "Bookmark streams or play videos to populate this section.");
+      } else {
+        stateBox.style.display = "none";
+        renderVideoCards(list);
+      }
+    }
+
+    function clearCurrentLibrary() {
+      if (activeView === "discover") return;
+      setStore(activeView, []);
+      renderLibraryView(activeView);
+      showToast("Cleared library list");
+    }
+
+    // Search, Sort & Filters
+    function executeSearch() {
+      currentQuery = document.getElementById("searchInput").value.trim();
+      currentPage = 1;
+      document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+      switchView("discover");
+    }
+
+    function selectCategoryChip(chipEl, queryStr) {
+      document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+      chipEl.classList.add("active");
+      currentQuery = queryStr === "popular" ? "" : queryStr;
+      document.getElementById("searchInput").value = currentQuery;
+      currentPage = 1;
+      switchView("discover");
+    }
+
+    function quickFilter(queryStr, sortOrder, navId) {
+      document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
+      document.getElementById(navId)?.classList.add("active");
+      currentQuery = queryStr === "popular" ? "" : queryStr;
+      currentOrdering = sortOrder;
+      document.getElementById("sortSelect").value = sortOrder;
+      currentPage = 1;
+      activeView = "discover";
+      loadDiscoverStreams();
+    }
+
+    function changeOrdering() {
+      currentOrdering = document.getElementById("sortSelect").value;
+      currentPage = 1;
+      if (activeView === "discover") loadDiscoverStreams();
+    }
+
+    function navigatePage(delta) {
+      if (currentPage + delta < 1) return;
+      currentPage += delta;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      loadDiscoverStreams();
+    }
+
+    function toggleGridDensity() {
+      document.getElementById("videoGrid").classList.toggle("compact");
+    }
+
+    function toggleIncognito() {
+      incognitoMode = !incognitoMode;
+      const btn = document.getElementById("incognitoBtn");
+      const label = document.getElementById("incognitoLabel");
+      btn.classList.toggle("active", incognitoMode);
+      label.textContent = incognitoMode ? "Incognito On" : "Incognito Off";
+      showToast(incognitoMode ? "Incognito Mode Active (History Paused)" : "Incognito Mode Disabled");
+    }
+
+    function triggerPanicExit() {
+      window.location.replace("https://www.google.com");
+    }
+
+    // Modal & Download Resolver
+    function openPlayerModal(vid) {
+      currentModalVideo = vid;
+      recordHistory(vid);
+
+      document.getElementById("modalVideoTitle").textContent = vid.title;
+      document.getElementById("modalIframe").src = vid.embed_url;
+      document.getElementById("modalStatsText").textContent =
+        `${Number(vid.views || 0).toLocaleString()} VIEWS  •  ${vid.duration}  •  ${vid.rating}% RATING`;
+
+      const isFav = getStore("favorites").some(item => item.id === vid.id);
+      document.getElementById("modalFavText").textContent = isFav ? "Saved in Vault" : "Save to Vault";
+      document.getElementById("modalFavBtn").classList.toggle("active", isFav);
+
+      document.getElementById("downloadDrawer").classList.remove("open");
+      document.getElementById("playerBackdrop").classList.add("open");
+    }
+
+    function closePlayerModal() {
+      document.getElementById("modalIframe").src = "";
+      document.getElementById("playerBackdrop").classList.remove("open");
+    }
+
+    function toggleAmbilight() {
+      const box = document.getElementById("playerModalBox");
+      const btn = document.getElementById("ambilightBtn");
+      box.classList.toggle("ambilight");
+      btn.classList.toggle("active");
+    }
+
+    function toggleTheaterMode() {
+      const box = document.getElementById("playerModalBox");
+      const btn = document.getElementById("theaterBtn");
+      box.classList.toggle("theater");
+      btn.classList.toggle("active");
+    }
+
+    function toggleCurrentModalBookmark() {
+      if (!currentModalVideo) return;
+      toggleLibraryItem("favorites", currentModalVideo);
+      const isFav = getStore("favorites").some(item => item.id === currentModalVideo.id);
+      document.getElementById("modalFavText").textContent = isFav ? "Saved in Vault" : "Save to Vault";
+      document.getElementById("modalFavBtn").classList.toggle("active", isFav);
+    }
+
+    function copyStreamShareLink() {
+      if (!currentModalVideo) return;
+      navigator.clipboard.writeText(currentModalVideo.url || currentModalVideo.embed_url);
+      showToast("Direct stream link copied to clipboard");
+    }
+
+    async function fetchDirectDownloadLinks() {
+      if (!currentModalVideo) return;
+      const drawer = document.getElementById("downloadDrawer");
+      const listEl = document.getElementById("downloadLinksList");
+      drawer.classList.add("open");
+      listEl.innerHTML = `<span class="mono" style="font-size:12px; color:#a1a1aa;">Resolving MP4 / HLS streams...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/download?id=${encodeURIComponent(currentModalVideo.id)}&url=${encodeURIComponent(currentModalVideo.url || "")}`);
+        const data = await res.json();
+
+        listEl.innerHTML = "";
+        if (data.streams && data.streams.length > 0) {
+          data.streams.forEach(st => {
+            const a = document.createElement("a");
+            a.className = "dl-chip mono";
+            a.href = st.url;
+            a.target = "_blank";
+            a.rel = "noopener";
+            a.textContent = `⬇ ${st.quality} (${st.format})`;
+            listEl.appendChild(a);
+          });
+        } else {
+          listEl.innerHTML = `
+            <a class="dl-chip mono" href="${currentModalVideo.url}" target="_blank" rel="noopener">⬇ Open Source Download Page (${currentModalVideo.id})</a>
+            <a class="dl-chip mono" href="${currentModalVideo.embed_url}" target="_blank" rel="noopener">⬇ Open Standalone Embed Stream</a>
+          `;
+        }
+      } catch {
+        listEl.innerHTML = `
+          <a class="dl-chip mono" href="${currentModalVideo.url}" target="_blank" rel="noopener">⬇ Direct Video Source Page</a>
+        `;
+      }
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        document.getElementById("searchInput").focus();
+      } else if (e.key === "Escape") {
+        const now = Date.now();
+        if (now - lastEscTime < 450) {
+          triggerPanicExit();
+        }
+        lastEscTime = now;
+        closePlayerModal();
+      } else if ((e.key === "t" || e.key === "T") && document.getElementById("playerBackdrop").classList.contains("open")) {
+        toggleTheaterMode();
+      }
+    });
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return String(str || "").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+    }
+
+    // Initialize Counters & Feed
+    updateSidebarCounters();
+    loadDiscoverStreams();
+  </script>
+</body>
+</html>
